@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.webtv.commons.FileHelper;
+import com.webtv.commons.StringUtils;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -40,7 +43,7 @@ public class FileUploader {
                 InputStream stream = item.openStream();
                 if (!item.isFormField()) {
                     System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
-                    OutputStream out = new FileOutputStream("file.mp4");
+                    OutputStream out = new FileOutputStream(getFilename(stream, item.getName()));
                     IOUtils.copy(stream, out);
                     stream.close();
                 } else {
@@ -71,7 +74,7 @@ public class FileUploader {
                 InputStream uploadedStream = item.getInputStream();
                 if (!item.isFormField()) {
                     System.out.println("File field " + item.getFieldName() + " with file name " + item.getName() + " detected.");
-                    OutputStream out = new FileOutputStream("file.mp4");
+                    OutputStream out = new FileOutputStream(getFilename(uploadedStream, item.getName()));
                     IOUtils.copy(uploadedStream, out);
                     out.close();
                 } else {
@@ -81,6 +84,16 @@ public class FileUploader {
             return "success!";
         }
         return "form upload must be multipart/form-data!";
+    }
+
+    private String getFilename(InputStream stream, String filename) {
+        String ext = FileHelper.detectFileExtension(stream).orElse(".mp4");
+        if(StringUtils.isBlank(filename)) {
+            filename = StringUtils.randomString(10);
+        } else {
+            filename = StringUtils.toSlug(filename.substring(0, filename.lastIndexOf(ext)));
+        }
+        return String.format("%s%s", filename, ext);
     }
 
 }
