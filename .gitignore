@@ -11,3 +11,6 @@
 build
 bin
 uploads
+
+#Ingore project local specifique file
+src/main/resources/application-dev.properties
