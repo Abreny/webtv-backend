@@ -10,3 +10,6 @@
 # Ignore Gradle build output directory
 build
 bin
+
+#Ingore project local specifique file
+src/main/resources/application-dev.properties
