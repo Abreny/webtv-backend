@@ -5,7 +5,7 @@ package com.webtv;
 
 import java.io.File;
 
-import com.webtv.services.FileUploader;
+import com.webtv.service.FileUploader;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
