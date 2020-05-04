@@ -29,6 +29,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'commons-fileupload:commons-fileupload:1.4'
     implementation 'org.apache.tika:tika-core:1.24.1'
+	implementation 'com.google.apis:google-api-services-youtube:v3-rev20200423-1.30.9'
+	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.30.6'
+
 	runtimeOnly 'mysql:mysql-connector-java'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

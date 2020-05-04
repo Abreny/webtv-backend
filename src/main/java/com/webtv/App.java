@@ -6,16 +6,18 @@ package com.webtv;
 import java.io.File;
 
 import com.webtv.services.FileUploader;
+import com.webtv.services.youtube.UploadVideo;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication
+// @SpringBootApplication
 public class App {
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        // SpringApplication.run(App.class, args);
+        UploadVideo.run(args);
     }
 
     @Bean
