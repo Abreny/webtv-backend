@@ -1,11 +1,11 @@
-package com.webtv.controllers;
+package com.webtv.controller;
 
 import java.io.IOException;
 
 import javax.validation.Valid;
 
 import com.webtv.forms.PitchForm;
-import com.webtv.services.FileUploader;
+import com.webtv.service.FileUploader;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;

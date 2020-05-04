@@ -1,4 +1,4 @@
-package com.webtv.services.youtube;
+package com.webtv.service.youtube;
 
 import java.io.IOException;
 import java.util.ArrayList;
