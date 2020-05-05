@@ -36,7 +36,7 @@ public class UserController {
         return uService.create(user, bResult);
     }
 
-    @ApiOperation("Login. Check an user by pawd and username. If it was valid, this endpoint return an access token and a refresh token for usage later.")
+    @ApiOperation("Login. Check an user by password and username. If it was valid, this endpoint return an access token and a refresh token for usage later.")
     @PostMapping("login")
     ResponseModel<LoginResponse> login(@Valid LoginForm form, BindingResult bResult) {
         Validator.checkCreate(bResult);

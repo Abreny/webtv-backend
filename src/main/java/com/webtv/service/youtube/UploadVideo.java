@@ -14,19 +14,26 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.google.common.collect.Lists;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class UploadVideo {
     private static YouTube youtube;
     private static final String VIDEO_FILE_FORMAT = "video/*";
-    public static void run(String[] args) {
-        List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
+
+    @Autowired
+    private GoogleAuth auth;
+
+    public void run(String[] args) {
+        // List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
         try {
             
-            Credential credential = Auth.authorize(scopes, "uploadvideo");
+            Credential credential = auth.authorize("fanabned@gmail.com");
 
             // This object is used to make YouTube Data API requests.
-            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
+            youtube = new YouTube.Builder(GoogleAuthHelper.HTTP_TRANSPORT, GoogleAuthHelper.JSON_FACTORY, credential).setApplicationName(
                     "youtube-cmdline-uploadvideo-sample").build();
 
             // System.out.println("Uploading: " + SAMPLE_VIDEO_FILENAME);

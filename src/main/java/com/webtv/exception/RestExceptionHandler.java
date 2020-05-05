@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.security.SecureRandom;
 import java.util.Map;
 
 import com.webtv.commons.ResponseDataBuilder;
@@ -67,4 +68,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                         String.format("%s %s", ex.getEntityName().replace('_', ' '), ex.getEntityId())))
                         .get());
     }
+//     @ExceptionHandler(value = { GoogleAuthException.class })
+//     protected ResponseModel<Map<String, String>> handleGoogleAuthException(GoogleAuthException ex,
+//             WebRequest request) {
+//         final String code = String.format("google;%d", new SecureRandom().nextInt());
+//         return ResponseModel.success(ex.getUrl().setState(code).build());
+//     }
 }
