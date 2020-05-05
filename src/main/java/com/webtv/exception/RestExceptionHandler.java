@@ -19,11 +19,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private Translator translator;
 
-//     @ExceptionHandler(value = { InvalidToken.class, InvalidAuthorizationHeader.class,
-//             AuthMethodNotSupportedException.class, JWTExpiredTokenException.class })
-//     protected ResponseModel<String> handleDataIntegrityxception(AuthenticationException ex, WebRequest request) {
-//         return ResponseModel.unauthorized(ex.getMessage());
-//     }
+    @ExceptionHandler(value = { InvalidToken.class, InvalidAuthorizationHeader.class,
+            AuthMethodNotSupportedException.class, JWTExpiredTokenException.class, BadLoginException.class })
+    protected ResponseModel<String> handleDataIntegrityxception(AuthenticationException ex, WebRequest request) {
+        return ResponseModel.unauthorized(ex.getMessage());
+    }
 
     @ExceptionHandler(value = { BadRequest.class })
     protected ResponseModel<Map<String, String>> handleValidatorException(BadRequest ex, WebRequest request) {

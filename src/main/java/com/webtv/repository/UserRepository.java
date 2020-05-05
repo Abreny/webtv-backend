@@ -1,4 +1,4 @@
-package com.webtv.retpository;
+package com.webtv.repository;
 
 import java.util.Optional;
 

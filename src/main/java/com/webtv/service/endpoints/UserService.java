@@ -2,7 +2,7 @@ package com.webtv.service.endpoints;
 
 import com.webtv.entity.User;
 import com.webtv.exception.UniqueConstraintException;
-import com.webtv.retpository.UserRepository;
+import com.webtv.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
