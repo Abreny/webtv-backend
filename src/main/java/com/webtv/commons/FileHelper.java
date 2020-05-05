@@ -41,4 +41,18 @@ public class FileHelper {
         TikaConfig config = TikaConfig.getDefaultConfig();
         return config.getMimeRepository();
     }
+
+    public static String getFileExtension(String filename) {
+        String extension = "";
+        if(filename == null) {
+            return extension;
+        }
+        int i = filename.lastIndexOf('.');
+        int p = Math.max(filename.lastIndexOf('/'), filename.lastIndexOf('\\'));
+
+        if (i > p) {
+            extension = filename.substring(i + 1);
+        }
+        return extension;
+    }
 }

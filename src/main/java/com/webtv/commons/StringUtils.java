@@ -12,6 +12,8 @@ public class StringUtils {
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
     private static final int LEFT_LIMIT = 97;
     private static final int RIGHT_LIMIT = 122;
+    private static volatile SecureRandom NUMBER_GENERATOR = null;
+    private static final long MSB = 0x8000000000000000L;
 
     public static String toSlug(String input) {
         String nowhitespace = WHITESPACE.matcher(input).replaceAll("-");
@@ -29,4 +31,12 @@ public class StringUtils {
         return random.ints(LEFT_LIMIT, RIGHT_LIMIT + 1).limit(length)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
     }
+    public static String randomUniqueString() {
+        SecureRandom ng = NUMBER_GENERATOR;
+        if (ng == null) {
+            NUMBER_GENERATOR = ng = new SecureRandom();
+        }
+
+        return Long.toHexString(MSB | ng.nextLong()) + Long.toHexString(MSB | ng.nextLong());
+    } 
 }

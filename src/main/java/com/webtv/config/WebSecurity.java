@@ -65,7 +65,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/webjars/**",
             "/swagger-resources/**",
-            "/api/v1/**",
+            "/api/v1/auth/token",
+            "/api/v1/users/login",
+            "/api/v1/users/signup",
             "api/v1/auth/google/**"
         );
         http.csrf().disable()
