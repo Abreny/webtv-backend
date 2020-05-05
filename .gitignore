@@ -14,3 +14,4 @@ uploads
 
 #Ingore project local specifique file
 src/main/resources/application-dev.properties
+src/main/resources/client_secrets.json
