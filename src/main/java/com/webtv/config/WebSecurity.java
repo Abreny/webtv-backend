@@ -68,7 +68,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             "/api/v1/auth/token",
             "/api/v1/users/login",
             "/api/v1/users/signup",
-            "api/v1/auth/google/**"
+            "/api/v1/auth/google/**"
         );
         http.csrf().disable()
         .exceptionHandling()
