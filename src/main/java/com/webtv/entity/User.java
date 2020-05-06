@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
@@ -24,7 +25,6 @@ public class User {
     @Size(min = 2, max = 255)
     private String name;
 
-    @NotNull
     @Size(min = 1, max = 100)
     @Column(length = 100)
     private String fonction;
@@ -40,17 +40,22 @@ public class User {
     @Size(min = 2, max = 255)
     private String password;
 
-    @NotNull
     @Size(min = 2, max = 255)
     private String telephone;
 
-    @NotNull
     @Size(min = 2, max = 255)
     private String ville;
 
-    @NotNull
     @Size(min = 2, max = 255)
     private String pays = "Côte d'Ivoire";
+
+    @JsonProperty("fb_id")
+    @Column(name = "fb_id", nullable = true)
+    private String fbId;
+
+    @JsonProperty("google_id")
+    @Column(name = "google_id", nullable = true)
+    private String googledId;
 
     public Long getId() {
         return id;
@@ -112,4 +117,22 @@ public class User {
         this.ville = ville;
         return this;
     }
+
+    public String getFbId() {
+        return this.fbId;
+    }
+
+    public User setFbId(String fbId) {
+        this.fbId = fbId;
+        return this;
+    }
+
+    public String getGoogledId() {
+        return this.googledId;
+    }
+
+    public User setGoogledId(String googledId) {
+        this.googledId = googledId;
+        return this;
+    }    
 }
