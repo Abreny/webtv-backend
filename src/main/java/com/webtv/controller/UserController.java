@@ -32,8 +32,9 @@ public class UserController {
 
     @ApiOperation("Signup. Create a new user for given email.")
     @PostMapping("signup")
-    ResponseModel<User> signup(@Valid User user, BindingResult bResult) {
-        return uService.create(user, bResult);
+    ResponseModel<LoginResponse> signup(@Valid User user, BindingResult bResult) {
+        final User u = uService.create(user, bResult).getData();
+        return ResponseModel.created(loginService.tokenOf(u));
     }
 
     @ApiOperation("Login. Check an user by password and username. If it was valid, this endpoint return an access token and a refresh token for usage later.")

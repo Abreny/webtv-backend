@@ -44,8 +44,7 @@ public class LoginService implements LoginInterface {
     public LoginResponse login(String username, String password) {                                                                                   
         try {                                                                                                                                       
             final Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            final UserWrapper uw = (UserWrapper)auth.getPrincipal();
-            return new LoginResponse(uw.getUser(), jwtTokenUtil.generateToken(uw), jwtTokenUtil.generateRefreshToken(uw));
+            return tokenOf((UserWrapper)auth.getPrincipal());
         } catch (DisabledException e) {
             throw new BadLoginException("Account not avalaible or not activated");
         } catch (BadCredentialsException e) {                                                                                                                                                                                   
@@ -65,7 +64,14 @@ public class LoginService implements LoginInterface {
         }
         
         final User user = userService.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return tokenOf(user);
+    }
+
+    public LoginResponse tokenOf(User user) {
         final UserWrapper userWrapper = new UserWrapper(user);
         return new LoginResponse(user, jwtTokenUtil.generateToken(userWrapper), jwtTokenUtil.generateRefreshToken(userWrapper));
+    }
+    private LoginResponse tokenOf(UserWrapper userWrapper) {
+        return new LoginResponse(userWrapper.getUser(), jwtTokenUtil.generateToken(userWrapper), jwtTokenUtil.generateRefreshToken(userWrapper));
     }
 }
