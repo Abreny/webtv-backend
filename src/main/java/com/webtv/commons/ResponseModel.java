@@ -1,6 +1,7 @@
 package com.webtv.commons;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class ResponseModel<T> {
     private int status;
@@ -52,6 +53,10 @@ public class ResponseModel<T> {
         return new ResponseModel<T>(data).setStatus(HttpStatus.OK.value()).setMessage("Operation executed successfully")
                 .setError(false);
     }
+    public static <T> ResponseModel<T> created(T data) {
+        return new ResponseModel<T>(data).setStatus(HttpStatus.CREATED.value()).setMessage("Ressource created successfully")
+                .setError(false);
+    }
     public static <T> ResponseModel<T> unauthorized(T data) {
         return new ResponseModel<T>(data).setStatus(HttpStatus.UNAUTHORIZED.value()).setMessage("Operation unauthorized")
                 .setError(true);
@@ -64,5 +69,9 @@ public class ResponseModel<T> {
     public static <T> ResponseModel<T> server_error(T data) {
         return new ResponseModel<T>(data).setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()).setMessage("Server error")
                 .setError(true);
+    }
+
+    public static <T> ResponseEntity<ResponseModel<T>> responseEntity(ResponseModel<T> response) {
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

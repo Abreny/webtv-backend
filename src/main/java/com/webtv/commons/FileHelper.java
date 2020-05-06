@@ -1,5 +1,6 @@
 package com.webtv.commons;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -54,5 +55,13 @@ public class FileHelper {
             extension = filename.substring(i + 1);
         }
         return extension;
+    }
+
+    public static void removeFile(File file) {
+        file.delete();
+    }
+
+    public static void removeFile(String filename) {
+        new File(filename).delete();
     }
 }

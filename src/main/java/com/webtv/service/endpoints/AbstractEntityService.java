@@ -19,10 +19,10 @@ public abstract class AbstractEntityService<K,V> {
     }
 
     public ResponseModel<K> create(K object, BindingResult bindingResult) {
-        Validator.checkCreate(bindingResult);
+        validate(bindingResult, false);
         validateId(object);
         beforeSave(object);
-        return ResponseModel.success(repository.save(object));
+        return ResponseModel.created(repository.save(object));
     }
     
     public ResponseModel<List<K>> list() {
@@ -37,7 +37,7 @@ public abstract class AbstractEntityService<K,V> {
     }
 
     public ResponseModel<K> update(K update, BindingResult bindingResult, V id) {
-        Validator.checkUpdate(bindingResult);
+        validate(bindingResult, true);
         K object = findById(id);
         try {
             new EntityCopyManager().copy(object, update);
@@ -47,6 +47,10 @@ public abstract class AbstractEntityService<K,V> {
         restoreId(object, id);
         beforeUpdate(object, update);
         return ResponseModel.success(repository.save(object));
+    }
+
+    protected void validate(BindingResult bResult, boolean update) {
+        Validator.check(bResult, update);
     }
 
     protected void validateId(K id) {
@@ -69,7 +73,7 @@ public abstract class AbstractEntityService<K,V> {
     }
 
     protected K findById(V object) {
-        return null;
+        return this.repository.findById(object).get();
     }
 
     protected final JpaRepository<K,V> getRepository() {
