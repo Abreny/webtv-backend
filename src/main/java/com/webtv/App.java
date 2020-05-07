@@ -15,8 +15,9 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
-        // UploadVideo.run(args);
+        SpringApplication app = new SpringApplication(App.class);
+		app.setAdditionalProfiles("ssl");
+		app.run(args);
     }
 
     @Bean
