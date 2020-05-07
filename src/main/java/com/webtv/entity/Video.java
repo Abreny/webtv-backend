@@ -2,6 +2,8 @@ package com.webtv.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +23,9 @@ public class Video {
 
     @Column(length = 255, nullable = false)
     private String filename;
+
+    @Enumerated(EnumType.ORDINAL)
+    private VideoStatus status = VideoStatus.CREATED;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,5 +52,13 @@ public class Video {
     public Video setAuthor(User author) {
         this.author = author;
         return this;
+    }
+
+    public VideoStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(VideoStatus status) {
+        this.status = status;
     }
 }

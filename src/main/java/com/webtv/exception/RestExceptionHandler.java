@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.webtv.commons.ResponseDataBuilder;
 import com.webtv.commons.ResponseModel;
+import com.webtv.commons.UnauthorizedResponse;
 import com.webtv.service.Translator;
 
 @RestControllerAdvice
@@ -22,9 +23,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private Translator translator;
     
     @ExceptionHandler(value = { InvalidToken.class, InvalidAuthorizationHeader.class,
-            AuthMethodNotSupportedException.class, JWTExpiredTokenException.class, BadLoginException.class })
-    protected ResponseEntity<ResponseModel<String>> handleDataIntegrityxception(AuthenticationException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(ex.getMessage()));
+            AuthMethodNotSupportedException.class, JWTExpiredTokenException.class })
+    protected ResponseEntity<ResponseModel<UnauthorizedResponse>> handleInvalidTokeException(AuthenticationException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(UnauthorizedResponse.of("BAD_TOKEN", ex.getMessage())));
+    }
+
+    @ExceptionHandler(value = { BadLoginException.class })
+    protected ResponseEntity<ResponseModel<UnauthorizedResponse>> handleBadLoginException(AuthenticationException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(UnauthorizedResponse.of("BAD_LOGIN", ex.getMessage())));
     }
 
     @ExceptionHandler(value = { BadRequest.class })

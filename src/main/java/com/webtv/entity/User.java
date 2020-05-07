@@ -2,6 +2,8 @@ package com.webtv.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,6 +36,9 @@ public class User {
     @Size(min = 2, max = 255)
     @Column(unique = true, length = 100)
     private String email;
+
+    @Enumerated(EnumType.ORDINAL)
+    private UserRole role = UserRole.USER;
 
     @JsonIgnore
     @NotNull
@@ -134,5 +139,15 @@ public class User {
     public User setGoogledId(String googledId) {
         this.googledId = googledId;
         return this;
-    }    
+    }
+
+
+    public UserRole getRole() {
+        return this.role;
+    }
+
+    public User setRole(UserRole role) {
+        this.role = role;
+        return this;
+    }
 }

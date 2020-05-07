@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.stereotype.Component;
 
 import com.webtv.commons.ResponseModel;
+import com.webtv.commons.UnauthorizedResponse;
 import com.webtv.exception.AuthMethodNotSupportedException;
 import com.webtv.exception.InvalidAuthorizationHeader;
 import com.webtv.exception.InvalidToken;
@@ -44,20 +45,19 @@ public class JWTAuthenticationFailureHandler implements AuthenticationFailureHan
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
-		System.out.println(e.getLocalizedMessage());
-		System.out.println(e.getMessage());
+		UnauthorizedResponse resp = UnauthorizedResponse.of("AUTHENTICATION_REQUIRED", "Authentication failed");
 		if (e instanceof BadCredentialsException) {
-			mapper.writeValue(response.getWriter(), ResponseModel.unauthorized("Invalid username or password"));
+			resp = UnauthorizedResponse.of("BAD_LOGIN", "Invalid username or password");
 		} else if (e instanceof JWTExpiredTokenException) {
-			mapper.writeValue(response.getWriter(), ResponseModel.unauthorized("Token has expired"));
+			resp = UnauthorizedResponse.of("BAD_TOKEN", "Token has expired");
 		} else if (e instanceof AuthMethodNotSupportedException ) {
-		    mapper.writeValue(response.getWriter(), ResponseModel.unauthorized(e.getMessage()));
+			resp = UnauthorizedResponse.of("BAD_TOKEN", e.getMessage());
 		} else if (e instanceof InvalidAuthorizationHeader) {
-		    mapper.writeValue(response.getWriter(), ResponseModel.unauthorized(e.getMessage()));
+		    resp = UnauthorizedResponse.of("BAD_TOKEN", e.getMessage());
 		} else if (e instanceof InvalidToken) {
-		    mapper.writeValue(response.getWriter(), ResponseModel.unauthorized(e.getMessage()));
+		    resp = UnauthorizedResponse.of("BAD_TOKEN", e.getMessage());
 		}
 
-		mapper.writeValue(response.getWriter(), ResponseModel.unauthorized("Authentication failed"));
+		mapper.writeValue(response.getWriter(), ResponseModel.unauthorized(resp));
 	}
 }
