@@ -3,6 +3,8 @@ package com.webtv.service.security;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.webtv.exception.InvalidToken;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -40,13 +42,17 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
         Jws<Claims> jwsClaims = jwtTokenUtil.parseClaims(rawAccessToken);
         String subject = jwsClaims.getBody().getSubject();
         List<String> scopes = jwsClaims.getBody().get("scopes", List.class);
-        List<GrantedAuthority> authorities = scopes.stream()
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
-        
-        UserWrapper context = (UserWrapper) userDetailsService.loadUserByUsername(subject);
-        
-        return new JWTAuthenticationToken(context.getUser(), authorities);
+        if(scopes.contains("ROLE_ACCESS_TOKEN")) {
+            List<GrantedAuthority> authorities = scopes.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+            
+            UserWrapper context = (UserWrapper) userDetailsService.loadUserByUsername(subject);
+            
+            return new JWTAuthenticationToken(context.getUser(), authorities);
+        }
+
+        throw new InvalidToken("Invalid JWT token. An access token is required.");
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.webtv.entity.User;
 import com.webtv.exception.BadLoginException;
 import com.webtv.exception.InvalidToken;
 import com.webtv.exception.JWTExpiredTokenException;
+import com.webtv.exception.RefreshTokenException;
 import com.webtv.repository.UserRepository;
 import com.webtv.service.security.JWTTokenUtil;
 import com.webtv.service.security.UserWrapper;
@@ -57,10 +58,10 @@ public class LoginService implements LoginInterface {
             username = jwtTokenUtil.getUsernameFromToken(tokenPayload);
         } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SignatureException ex) {
             logger.error("Invalid JWT Token", ex);
-            throw new InvalidToken("Invalid JWT token");
+            throw new RefreshTokenException(new InvalidToken("Invalid JWT token"));
         } catch (ExpiredJwtException expiredEx) {
             logger.info("JWT Token is expired", expiredEx);
-            throw new JWTExpiredTokenException(tokenPayload, "JWT Token expired", expiredEx);
+            throw new RefreshTokenException(new JWTExpiredTokenException(tokenPayload, "JWT Token expired", expiredEx));
         }
         
         final User user = userService.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));

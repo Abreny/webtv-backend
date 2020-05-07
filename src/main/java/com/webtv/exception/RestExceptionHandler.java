@@ -33,6 +33,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(UnauthorizedResponse.of("BAD_LOGIN", ex.getMessage())));
     }
 
+    @ExceptionHandler(value = { RefreshTokenException.class })
+    protected ResponseEntity<ResponseModel<UnauthorizedResponse>> handleRefreshTokenException(AuthenticationException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(UnauthorizedResponse.of("BAD_REFRESH_TOKEN", ex.getMessage())));
+    }
+
     @ExceptionHandler(value = { BadRequest.class })
     protected ResponseEntity<ResponseModel<Map<String, String>>> handleValidatorException(BadRequest ex, WebRequest request) {
         return ResponseModel.responseEntity(ResponseModel.badRequest(ex.get()));
