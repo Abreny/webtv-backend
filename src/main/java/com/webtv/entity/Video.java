@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "video")
@@ -21,10 +22,18 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @Column(length = 255, nullable = false)
     private String filename;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Column(length = 255)
+    private String url;
+
+    @JsonProperty("content_type")
+    @Column(name = "content_type", length = 100)
+    private String contentType;
+
+    @Enumerated(EnumType.STRING)
     private VideoStatus status = VideoStatus.CREATED;
 
     @JsonIgnore
@@ -60,5 +69,22 @@ public class Video {
 
     public void setStatus(VideoStatus status) {
         this.status = status;
+    }
+
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getContentType() {
+        return this.contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

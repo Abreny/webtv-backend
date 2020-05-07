@@ -57,6 +57,11 @@ public class ResponseModel<T> {
         return new ResponseModel<T>(data).setStatus(HttpStatus.CREATED.value()).setMessage("Ressource created successfully")
                 .setError(false);
     }
+
+    public static <T> ResponseModel<T> forbidden(T data) {
+        return new ResponseModel<T>(data).setStatus(HttpStatus.FORBIDDEN.value()).setMessage("Operation not permitted")
+                .setError(true);
+    }
     public static <T> ResponseModel<T> unauthorized(T data) {
         return new ResponseModel<T>(data).setStatus(HttpStatus.UNAUTHORIZED.value()).setMessage("Operation unauthorized")
                 .setError(true);

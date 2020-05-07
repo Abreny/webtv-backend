@@ -37,11 +37,10 @@ public class User {
     @Column(unique = true, length = 100)
     private String email;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
 
     @JsonIgnore
-    @NotNull
     @Size(min = 2, max = 255)
     private String password;
 

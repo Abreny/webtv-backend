@@ -1,6 +1,13 @@
 package com.webtv.service.endpoints;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+import com.webtv.commons.ResponseModel;
 import com.webtv.entity.User;
+import com.webtv.entity.UserRole;
 import com.webtv.exception.UniqueConstraintException;
 import com.webtv.repository.UserRepository;
 
@@ -28,6 +35,24 @@ public class UserService extends AbstractEntityService<User, Long> {
         this.userRepository.findByEmail(entity.getEmail()).ifPresent((e) -> {
             throw new UniqueConstraintException("user", "email");
         });
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy").withZone(ZoneId.systemDefault());
+        if(entity.getPassword() == null) entity.setPassword(String.format("$user%s", formatter.format(Instant.now())));
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+    }
+    @Override
+    protected void beforeUpdate(User old, User entity) {
+        if(entity.getEmail() != null) {
+            Optional<User> found= this.userRepository.findByEmail(entity.getEmail());
+            if(found.isPresent() && !found.get().getId().equals(old.getId())) {
+                throw new UniqueConstraintException("user", "email");
+            }
+        }
+        if(entity.getPassword() != null) old.setPassword(passwordEncoder.encode(entity.getPassword()));
+    }
+
+    public ResponseModel<User> changeRole(Long id, int role) {
+        User u = findById(id);
+        u.setRole(UserRole.of(role));
+        return ResponseModel.success(userRepository.save(u));
     }
 }

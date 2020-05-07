@@ -1,9 +1,12 @@
 package com.webtv.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.webtv.commons.ResponseDataBuilder;
@@ -14,11 +17,14 @@ import com.webtv.exception.BadRequest;
 import com.webtv.exception.ServerError;
 import com.webtv.forms.UploadVideoForm;
 import com.webtv.service.FileUploader;
+import com.webtv.service.FileUploaderInterface;
 import com.webtv.service.Translator;
 import com.webtv.service.endpoints.VideoService;
 import com.webtv.service.security.SecurityHelper;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +51,9 @@ public class UploadVideoController {
     @Autowired
     private VideoService videoService;
 
+    @Value("${app.host}")
+    private String host;
+
     @ApiOperation("UploadVideo. upload a new video.")
     @PostMapping("upload")
     ResponseModel<Video> uploadStream(@Valid UploadVideoForm form, BindingResult bindingResult) {
@@ -55,6 +64,8 @@ public class UploadVideoController {
                 Video video = new Video();
                 video.setAuthor(SecurityHelper.user());
                 video.setFilename(uploadedFile.getAbsolutePath());
+                video.setContentType(Files.probeContentType(uploadedFile.toPath()));
+                video.setUrl(String.format("%s/api/v1/videos/show/%s", host, uploadedFile.getName()));
                 return this.videoService.create(video, null);
             }
             throw new BadRequest(ResponseDataBuilder.of("video", this.tranlator.get("error.upload.video")).get());
@@ -67,6 +78,14 @@ public class UploadVideoController {
     @DeleteMapping("{videoId:[0-9]+}")
     ResponseModel<Video> remove(@PathVariable(name = "videoId") Long videoId) {
         return videoService.delete(videoId);
+    }
+
+    @ApiOperation("ShowVideo. Show a video by a ginven name.")
+    @GetMapping("show/{filename:.*}")
+    public void getVideoAsByteArray(HttpServletResponse response, @PathVariable("filename") String filename) throws IOException {
+        final File file = new File(new StringBuilder().append(FileUploaderInterface.UPLOADS_DIR).append("/").append(filename).toString());
+        response.setContentType(Files.probeContentType(file.toPath()));
+        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
     }
 
     @ApiOperation("MesVideo. Get all the user's uploaded video.")

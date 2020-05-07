@@ -23,7 +23,6 @@ public class Translator {
      * @return java.lang.String
      */
     public String get(String key) {
-        System.out.println("LANG: "+LocaleContextHolder.getLocale().getLanguage());
         return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
     }
 

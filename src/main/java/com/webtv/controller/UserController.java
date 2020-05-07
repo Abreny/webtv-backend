@@ -12,7 +12,9 @@ import com.webtv.service.endpoints.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,5 +44,17 @@ public class UserController {
     ResponseModel<LoginResponse> login(@Valid LoginForm form, BindingResult bResult) {
         Validator.checkCreate(bResult);
         return ResponseModel.success(loginService.login(form.getEmail(), form.getPassword()));
+    }
+
+    @ApiOperation("UpdateProfile. Update the profile of the user.")
+    @PutMapping("{userId:[0-9]}")
+    ResponseModel<User> update(@Valid User user, BindingResult bResult, @PathVariable("userId") Long userId) {
+        return this.uService.update(user, bResult, userId);
+    }
+
+    @ApiOperation("Role. Change the role of a given user.")
+    @PutMapping("role/{userId:[0-9]+}/{roleId:1|2}")
+    ResponseModel<LoginResponse> login(@PathVariable("userId") Long userId, @PathVariable("roleId") int role) {
+        return ResponseModel.success(loginService.tokenOf(uService.changeRole(userId, role).getData()));
     }
 }
