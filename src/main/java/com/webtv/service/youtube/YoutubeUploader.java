@@ -1,9 +1,9 @@
 package com.webtv.service.youtube;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -14,35 +14,28 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
+import com.webtv.entity.VideoYoutube;
+import com.webtv.repository.VideoRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-@Component
-public class UploadVideo {
+public class YoutubeUploader implements Runnable {
     private static YouTube youtube;
     private static final String VIDEO_FILE_FORMAT = "video/*";
 
-    @Autowired
-    private GoogleAuth auth;
+    private final Credential credential;
+    private final VideoYoutube video;
+    private final VideoRepository videos;
 
-    public void run(String[] args) {
-        // List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
+    public YoutubeUploader(Credential auth, VideoYoutube video, VideoRepository videos) {
+        this.credential = auth;
+        this.video = video;
+        this.videos = videos;
+    }
+
+    public void upload() {
         try {
-            
-            Credential credential = auth.authorize("fanabned@gmail.com");
-
-            // This object is used to make YouTube Data API requests.
-            youtube = new YouTube.Builder(GoogleAuthHelper.HTTP_TRANSPORT, GoogleAuthHelper.JSON_FACTORY, credential).setApplicationName(
-                    "youtube-cmdline-uploadvideo-sample").build();
-
-            // System.out.println("Uploading: " + SAMPLE_VIDEO_FILENAME);
-
-            // Add extra information to the video before uploading.
+            youtube = new YouTube.Builder(GoogleAuthHelper.HTTP_TRANSPORT, GoogleAuthHelper.JSON_FACTORY, credential)
+                    .setApplicationName("webtv-api").build();
             Video videoObjectDefiningMetadata = new Video();
-
-            // Set the video to be publicly visible. This is the default
-            // setting. Other supporting settings are "unlisted" and "private."
             VideoStatus status = new VideoStatus();
             status.setPrivacyStatus("public");
             videoObjectDefiningMetadata.setStatus(status);
@@ -50,37 +43,17 @@ public class UploadVideo {
             // Most of the video's metadata is set on the VideoSnippet object.
             VideoSnippet snippet = new VideoSnippet();
 
-            // This code uses a Calendar instance to create a unique name and
-            // description for test purposes so that you can easily upload
-            // multiple files. You should remove this code from your project
-            // and use your own standard names instead.
-            Calendar cal = Calendar.getInstance();
-            snippet.setTitle("Test Upload via Java on " + cal.getTime());
-            snippet.setDescription(
-                    "Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
-
-            // Set the keyword tags that you want to associate with the video.
-            List<String> tags = new ArrayList<String>();
-            tags.add("test");
-            tags.add("example");
-            tags.add("java");
-            tags.add("YouTube Data API V3");
-            tags.add("erase me");
-            snippet.setTags(tags);
+            snippet.setTitle(video.getTitle());
+            snippet.setDescription(video.getDescription());
+            snippet.setTags(new ArrayList<>(video.getTags()));
 
             // Add the completed snippet object to the video resource.
             videoObjectDefiningMetadata.setSnippet(snippet);
 
             InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT,
-                    UploadVideo.class.getResourceAsStream("/sample-video.mp4"));
-
-            // Insert the video. The command sends three arguments. The first
-            // specifies which information the API request is setting and which
-            // information the API response should return. The second argument
-            // is the video resource that contains metadata about the new video.
-            // The third argument is the actual video content.
-            YouTube.Videos.Insert videoInsert = youtube.videos()
-                    .insert("snippet,statistics,status", videoObjectDefiningMetadata, mediaContent);
+                    new FileInputStream(new File(video.getVideo().getFilename())));
+            YouTube.Videos.Insert videoInsert = youtube.videos().insert("snippet,statistics,status",
+                    videoObjectDefiningMetadata, mediaContent);
 
             // Set the upload type and add an event listener.
             MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
@@ -101,7 +74,10 @@ public class UploadVideo {
                             System.out.println("Upload percentage: " + uploader.getNumBytesUploaded());
                             break;
                         case MEDIA_COMPLETE:
-                            System.out.println("Upload Completed!");
+                            System.out.println("Upload completed.");
+                            final com.webtv.entity.Video uploadVideo= YoutubeUploader.this.video.getVideo();
+                            uploadVideo.setStatus(com.webtv.entity.VideoStatus.SHARED);
+                            YoutubeUploader.this.videos.save(uploadVideo);
                             break;
                         case NOT_STARTED:
                             System.out.println("Upload Not Started!");
@@ -133,5 +109,10 @@ public class UploadVideo {
             System.err.println("Throwable: " + t.getMessage());
             t.printStackTrace();
         }
+    }
+
+    @Override
+    public void run() {
+        upload();
     }
 }

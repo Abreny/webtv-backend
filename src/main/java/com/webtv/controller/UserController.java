@@ -1,5 +1,7 @@
 package com.webtv.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import com.webtv.commons.LoginResponse;
@@ -12,6 +14,7 @@ import com.webtv.service.endpoints.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,6 +47,12 @@ public class UserController {
     ResponseModel<LoginResponse> login(@Valid LoginForm form, BindingResult bResult) {
         Validator.checkCreate(bResult);
         return ResponseModel.success(loginService.login(form.getEmail(), form.getPassword()));
+    }
+
+    @ApiOperation("User. Get the list of all users.")
+    @GetMapping
+    ResponseModel<List<User>> users() {
+        return uService.list();
     }
 
     @ApiOperation("UpdateProfile. Update the profile of the user.")

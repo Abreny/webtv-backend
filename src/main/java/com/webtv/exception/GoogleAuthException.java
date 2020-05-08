@@ -1,16 +1,14 @@
 package com.webtv.exception;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
-
 @SuppressWarnings("serial")
 public class GoogleAuthException extends RuntimeException {
-    private final GoogleAuthorizationCodeRequestUrl url;
+    private final String url;
 
-    public GoogleAuthException(GoogleAuthorizationCodeRequestUrl url) {
+    public GoogleAuthException(String url) {
         this.url = url;
     }
 
-    public GoogleAuthorizationCodeRequestUrl getUrl() {
+    public String getUrl() {
         return url;
     }
 }
