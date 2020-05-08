@@ -2,9 +2,11 @@ package com.webtv.controller;
 
 import javax.validation.Valid;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.webtv.commons.GoogleCredential;
 import com.webtv.commons.ResponseModel;
 import com.webtv.entity.VideoYoutube;
+import com.webtv.exception.GoogleAuthException;
 import com.webtv.service.endpoints.ShareService;
 import com.webtv.service.youtube.GoogleAuth;
 
@@ -41,6 +43,21 @@ public class GoogleAuthController {
     @PostMapping("google/share-youtube/{videoId:[0-9]+}")
     ResponseModel<VideoYoutube> shareYoutube(@Valid VideoYoutube video, BindingResult bResult, @PathVariable("videoId") Long videoId) {
         return shareService.share(video, bResult, videoId);
+    }
+
+    @ApiOperation("GoogleAuth. Get the google authenticated token.")
+    @GetMapping("google/token")
+    ResponseModel<GoogleCredential> getToken() {
+        final Credential credential = auth.authorize("fanabned@gmail.com");
+        if(null == credential) throw new GoogleAuthException(auth.authorizeUrl().build());
+        return ResponseModel.success(GoogleCredential.of(credential));
+    }
+
+    @ApiOperation("GoogleRevokeToken. Revoke the google authenticated token.")
+    @GetMapping("google/revoke-token")
+    ResponseModel<String> revokeToken() {
+        auth.deleteToken();
+        return ResponseModel.success("revoked successfully");
     }
 
     @ApiOperation("CallbackUrl. Save the google auth code or load an authenticated user. The 'code' paramater is a param callback from google.")

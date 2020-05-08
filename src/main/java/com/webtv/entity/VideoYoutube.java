@@ -14,6 +14,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name = "video_youtube")
 public class VideoYoutube {
@@ -32,6 +34,7 @@ public class VideoYoutube {
     @ElementCollection(targetClass = String.class)
     private Set<String> tags;
 
+    @ApiModelProperty(hidden = true)
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(nullable = false)
     private Video video;

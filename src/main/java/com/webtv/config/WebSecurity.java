@@ -80,7 +80,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         );
         String[] permitAdminEndpointList = new String [] {
             "/api/v1/auth/google/authorize-url",
-            "/api/v1/google/share-youtube/**"
+            "/api/v1/google/share-youtube/**",
+            "/api/v1/google/token",
+            "/api/v1/google/revoke-token"
         };
         http.csrf().disable()
         .exceptionHandling()

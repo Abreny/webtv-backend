@@ -55,4 +55,18 @@ public class GoogleAuth {
             throw new ServerError(e);
         }
     }
+    public void deleteToken(String code) {
+        try {
+            flow.getCredentialDataStore().delete(code);
+        } catch (IOException e) {
+            throw new ServerError(e);
+        }
+    }
+    public void deleteToken() {
+        try {
+            flow.getCredentialDataStore().clear();
+        } catch (IOException e) {
+            throw new ServerError(e);
+        }
+    }
 }
