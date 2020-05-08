@@ -75,6 +75,7 @@ public class VideoYoutube {
         return video;
     }
 
+    @ApiModelProperty(hidden = true)
     public void setVideo(Video video) {
         this.video = video;
     }

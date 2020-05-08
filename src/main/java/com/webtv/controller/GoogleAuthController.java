@@ -1,5 +1,6 @@
 package com.webtv.controller;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -11,6 +12,7 @@ import com.webtv.service.endpoints.ShareService;
 import com.webtv.service.youtube.GoogleAuth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,9 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("api/v1")
 public class GoogleAuthController {
+    
+    @Value("${app.front.redirect_url}")
+    private String redirectUrl;
 
     @Autowired
     private GoogleAuth auth;
@@ -62,9 +67,11 @@ public class GoogleAuthController {
 
     @ApiOperation("CallbackUrl. Save the google auth code or load an authenticated user. The 'code' paramater is a param callback from google.")
     @GetMapping("auth/google/authorized-url")
-    ResponseModel<GoogleCredential> onAuthorizeUrl(@RequestParam(name = "code", required = false) String code) {
+    ResponseModel<GoogleCredential> onAuthorizeUrl(HttpServletResponse httpServletResponse, @RequestParam(name = "code", required = false) String code) {
         if(code != null) {
-            return ResponseModel.success(GoogleCredential.of(auth.forNewCode(code)));
+            auth.forNewCode(code);
+            httpServletResponse.setHeader("Location", redirectUrl);
+            httpServletResponse.setStatus(302);
         }
         return ResponseModel.success(GoogleCredential.of(auth.authorize("fanabned@gmail.com")));
     }
