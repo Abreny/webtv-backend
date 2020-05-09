@@ -8,6 +8,8 @@ import com.webtv.commons.LoginResponse;
 import com.webtv.commons.ResponseModel;
 import com.webtv.commons.Validator;
 import com.webtv.entity.User;
+import com.webtv.forms.FacebookLoginForm;
+import com.webtv.forms.GoogleLoginForm;
 import com.webtv.forms.LoginForm;
 import com.webtv.service.LoginService;
 import com.webtv.service.endpoints.UserService;
@@ -47,6 +49,20 @@ public class UserController {
     ResponseModel<LoginResponse> login(@Valid LoginForm form, BindingResult bResult) {
         Validator.checkCreate(bResult);
         return ResponseModel.success(loginService.login(form.getEmail(), form.getPassword()));
+    }
+
+    @ApiOperation("LoginFb. Check an user by fbid. If it was valid, this endpoint return an access token and a refresh token for usage later.")
+    @PostMapping("login-fb")
+    ResponseModel<LoginResponse> loginFb(@Valid FacebookLoginForm form, BindingResult bResult) {
+        Validator.checkCreate(bResult);
+        return ResponseModel.success(loginService.loginFb(form.getFb_id()));
+    }
+
+    @ApiOperation("LoginGoogle. Check an user by google id. If it was valid, this endpoint return an access token and a refresh token for usage later.")
+    @PostMapping("login-google")
+    ResponseModel<LoginResponse> loginGoogle(@Valid GoogleLoginForm form, BindingResult bResult) {
+        Validator.checkCreate(bResult);
+        return ResponseModel.success(loginService.loginGoogle(form.getGoogle_id()));
     }
 
     @ApiOperation("User. Get the list of all users.")

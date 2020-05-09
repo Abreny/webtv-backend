@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.webtv.entity.UserRole;
 import com.webtv.service.security.CustomCorsFilter;
+import com.webtv.service.security.FacebookAuthenticationProvider;
+import com.webtv.service.security.GoogleAuthenticationProvider;
 import com.webtv.service.security.JWTAccessDeniedHandler;
 import com.webtv.service.security.JWTAuthenticationEntryPoint;
 import com.webtv.service.security.JWTAuthenticationProvider;
@@ -56,6 +58,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private JWTAuthenticationProvider jwtAuthenticationProvider;
 
+    @Autowired
+    private FacebookAuthenticationProvider fbProvider;
+
+    @Autowired 
+    private GoogleAuthenticationProvider googleProvider;
+
     protected JWTTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter(
             List<String> pathsToSkip, String pattern) throws Exception {
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, pattern);
@@ -74,6 +82,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**",
             "/api/v1/auth/token",
             "/api/v1/users/login",
+            "/api/v1/users/login-fb",
+            "/api/v1/users/login-google",
             "/api/v1/users/signup",
             "/api/v1/auth/google/authorized-url",
             "/api/v1/videos/show/**"
@@ -124,6 +134,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
         auth.authenticationProvider(jwtAuthenticationProvider);
+        auth.authenticationProvider(fbProvider);
+        auth.authenticationProvider(googleProvider);
     }
 
     @Bean

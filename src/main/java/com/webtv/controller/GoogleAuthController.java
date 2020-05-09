@@ -70,7 +70,7 @@ public class GoogleAuthController {
     ResponseModel<GoogleCredential> onAuthorizeUrl(HttpServletResponse httpServletResponse, @RequestParam(name = "code", required = false) String code) {
         if(code != null) {
             auth.forNewCode(code);
-            httpServletResponse.setHeader("Location", redirectUrl);
+            httpServletResponse.setHeader("Location", redirectUrl.replace("**", "#"));
             httpServletResponse.setStatus(302);
         }
         return ResponseModel.success(GoogleCredential.of(auth.authorize("fanabned@gmail.com")));

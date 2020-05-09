@@ -7,6 +7,8 @@ import com.webtv.exception.InvalidToken;
 import com.webtv.exception.JWTExpiredTokenException;
 import com.webtv.exception.RefreshTokenException;
 import com.webtv.repository.UserRepository;
+import com.webtv.service.security.FacebookAuthenticationToken;
+import com.webtv.service.security.GoogleAuthenticationToken;
 import com.webtv.service.security.JWTTokenUtil;
 import com.webtv.service.security.UserWrapper;
 
@@ -68,6 +70,14 @@ public class LoginService implements LoginInterface {
         return tokenOf(user);
     }
 
+    public LoginResponse loginFb(String fbId) {
+        final Authentication auth = this.authenticationManager.authenticate(new FacebookAuthenticationToken(fbId));
+        return tokenOf((User) auth.getPrincipal());
+    }
+    public LoginResponse loginGoogle(String googleId) {
+        final Authentication auth = this.authenticationManager.authenticate(new GoogleAuthenticationToken(googleId));
+        return tokenOf((User) auth.getPrincipal());
+    }
     public LoginResponse tokenOf(User user) {
         final UserWrapper userWrapper = new UserWrapper(user);
         return new LoginResponse(user, jwtTokenUtil.generateToken(userWrapper), jwtTokenUtil.generateRefreshToken(userWrapper));

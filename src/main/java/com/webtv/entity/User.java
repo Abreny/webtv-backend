@@ -30,8 +30,7 @@ public class User {
     @Size(min = 1, max = 100)
     @Column(length = 100)
     private String fonction;
-
-    @NotNull
+    
     @Email
     @Size(min = 2, max = 255)
     @Column(unique = true, length = 100)
@@ -59,7 +58,7 @@ public class User {
 
     @JsonProperty("google_id")
     @Column(name = "google_id", nullable = true)
-    private String googledId;
+    private String googleId;
 
     public Long getId() {
         return id;
@@ -131,12 +130,12 @@ public class User {
         return this;
     }
 
-    public String getGoogledId() {
-        return this.googledId;
+    public String getGoogleId() {
+        return this.googleId;
     }
 
-    public User setGoogledId(String googledId) {
-        this.googledId = googledId;
+    public User setGoogleId(String googleId) {
+        this.googleId = googleId;
         return this;
     }
 

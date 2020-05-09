@@ -82,9 +82,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             String.format("%s %s", ex.getEntityName().replace('_', ' '), ex.getEntityId())))
             .get()));
         }
+
         @ExceptionHandler(value = { GoogleAuthException.class })
         protected ResponseEntity<ResponseModel<UnauthorizedResponse>> handleGoogleAuthException(GoogleAuthException ex,
         WebRequest request) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(UnauthorizedResponse.of("GOOGLE_CREDENTIAL", ex.getUrl())));
+        }
+
+        @ExceptionHandler(value = { GoogleLoginExcetion.class, FacebookLoginException.class })
+        protected ResponseEntity<ResponseModel<UnauthorizedResponse>> handleGoogleFbException(AuthenticationException ex,
+        WebRequest request) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseModel.unauthorized(UnauthorizedResponse.of("GOOGLE_FACEBOOK", translator.get(ex.getMessage()))));
         }
     }

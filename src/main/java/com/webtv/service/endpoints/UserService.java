@@ -32,6 +32,12 @@ public class UserService extends AbstractEntityService<User, Long> {
 
     @Override
     protected void beforeSave(User entity) {
+        if(entity.getEmail() == null && entity.getFbId() != null) {
+            entity.setEmail(String.format("%s@fb.com", entity.getFbId()));
+        }
+        if(entity.getEmail() == null) {
+            throw new UniqueConstraintException("user", "email");
+        }
         this.userRepository.findByEmail(entity.getEmail()).ifPresent((e) -> {
             throw new UniqueConstraintException("user", "email");
         });
