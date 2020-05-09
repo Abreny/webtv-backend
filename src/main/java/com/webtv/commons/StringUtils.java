@@ -3,6 +3,9 @@ package com.webtv.commons;
 import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -38,5 +41,9 @@ public class StringUtils {
         }
 
         return Long.toHexString(MSB | ng.nextLong()) + Long.toHexString(MSB | ng.nextLong());
-    } 
+    }
+    public static String password() {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy").withZone(ZoneId.systemDefault());
+        return String.format("$user%s", formatter.format(Instant.now()));
+    }
 }

@@ -55,14 +55,14 @@ public class UserController {
     @PostMapping("login-fb")
     ResponseModel<LoginResponse> loginFb(@Valid FacebookLoginForm form, BindingResult bResult) {
         Validator.checkCreate(bResult);
-        return ResponseModel.success(loginService.loginFb(form.getFb_id()));
+        return ResponseModel.success(loginService.loginFb(form.getFb_id(), form.user()));
     }
 
     @ApiOperation("LoginGoogle. Check an user by google id. If it was valid, this endpoint return an access token and a refresh token for usage later.")
     @PostMapping("login-google")
     ResponseModel<LoginResponse> loginGoogle(@Valid GoogleLoginForm form, BindingResult bResult) {
         Validator.checkCreate(bResult);
-        return ResponseModel.success(loginService.loginGoogle(form.getGoogle_id()));
+        return ResponseModel.success(loginService.loginGoogle(form.getGoogle_id(), form.user()));
     }
 
     @ApiOperation("User. Get the list of all users.")

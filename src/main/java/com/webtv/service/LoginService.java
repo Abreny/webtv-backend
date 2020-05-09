@@ -70,12 +70,12 @@ public class LoginService implements LoginInterface {
         return tokenOf(user);
     }
 
-    public LoginResponse loginFb(String fbId) {
-        final Authentication auth = this.authenticationManager.authenticate(new FacebookAuthenticationToken(fbId));
+    public LoginResponse loginFb(String fbId, User u) {
+        final Authentication auth = this.authenticationManager.authenticate(new FacebookAuthenticationToken(fbId, u));
         return tokenOf((User) auth.getPrincipal());
     }
-    public LoginResponse loginGoogle(String googleId) {
-        final Authentication auth = this.authenticationManager.authenticate(new GoogleAuthenticationToken(googleId));
+    public LoginResponse loginGoogle(String googleId, User u) {
+        final Authentication auth = this.authenticationManager.authenticate(new GoogleAuthenticationToken(googleId, u));
         return tokenOf((User) auth.getPrincipal());
     }
     public LoginResponse tokenOf(User user) {

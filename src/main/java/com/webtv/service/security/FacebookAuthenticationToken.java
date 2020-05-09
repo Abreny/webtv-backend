@@ -25,7 +25,12 @@ public class FacebookAuthenticationToken extends AbstractAuthenticationToken {
         this.fbId = fbId;
         this.setAuthenticated(false);
     }
-
+    public FacebookAuthenticationToken(String fbId, User user) {
+        super(null);
+        this.fbId = fbId;
+        this.user = user;
+        this.setAuthenticated(false);
+    }
     public FacebookAuthenticationToken(User userContext, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.eraseCredentials();

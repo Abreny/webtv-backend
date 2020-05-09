@@ -1,7 +1,6 @@
 package com.webtv.service.security;
 
 import com.webtv.entity.User;
-import com.webtv.exception.FacebookLoginException;
 import com.webtv.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +20,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class FacebookAuthenticationProvider implements AuthenticationProvider {
     private final UserRepository users;
+    private final AccountUtil accountUtil;
 
     @Autowired
-    public FacebookAuthenticationProvider(UserRepository users) {
+    public FacebookAuthenticationProvider(UserRepository users, AccountUtil accountUtil) {
         this.users = users;
+        this.accountUtil = accountUtil;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String fbId = (String) authentication.getCredentials();
-        final User user = this.users.findByFbId(fbId).orElseThrow(()-> new FacebookLoginException());
+        final User user = this.users.findByFbId(fbId).orElse(accountUtil.generateOrUpdate(authentication));
         return new FacebookAuthenticationToken(user, new UserWrapper(user).getAuthorities());
     }
 

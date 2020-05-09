@@ -25,6 +25,12 @@ public class GoogleAuthenticationToken extends AbstractAuthenticationToken {
         this.googleId = googleId;
         this.setAuthenticated(false);
     }
+    public GoogleAuthenticationToken(String googleId, User user) {
+        super(null);
+        this.googleId = googleId;
+        this.user = user;
+        this.setAuthenticated(false);
+    }
 
     public GoogleAuthenticationToken(User userContext, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
