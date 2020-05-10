@@ -23,7 +23,6 @@ import com.webtv.service.FileUploaderInterface;
 import com.webtv.service.Translator;
 import com.webtv.service.endpoints.VideoService;
 import com.webtv.service.security.SecurityHelper;
-import com.webtv.service.serializer.AdminVideoList;
 import com.webtv.service.serializer.VideoSharedDetails;
 
 import org.apache.commons.io.IOUtils;
@@ -102,8 +101,8 @@ public class UploadVideoController {
 
     @ApiOperation("MesVideo. Get all the admin's uploaded video.")
     @GetMapping("mes-admin")
-    ResponseModel<AdminVideoList> mesAdmin() {
-        return videoService.allWithAuthor();
+    ResponseModel<List<VideoSharedDetails>> mesAdmin() {
+        return videoService.mesVideos(true);
     }
     @ApiOperation("MesVideoShared. Get all the admin's shared video.")
     @GetMapping("mes-shared")
