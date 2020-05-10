@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -168,5 +169,12 @@ public class User {
     public User setRole(UserRole role) {
         this.role = role;
         return this;
+    }
+
+    @PrePersist
+    public void defaultRole() {
+        if(role == null) {
+            role = UserRole.USER;
+        }
     }
 }

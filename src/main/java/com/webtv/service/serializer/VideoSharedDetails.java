@@ -1,21 +1,22 @@
 package com.webtv.service.serializer;
 
+import java.util.List;
+
 import com.webtv.entity.User;
 import com.webtv.entity.Video;
 import com.webtv.entity.VideoYoutube;
 
 public class VideoSharedDetails {
     private Video video;
-    private VideoYoutube details;
+    private List<VideoYoutube> details;
     private User author;
     
     public VideoSharedDetails() {
 
     }
 
-    public VideoSharedDetails(Video v, VideoYoutube details) {
+    public VideoSharedDetails(Video v) {
         this.video = v;
-        this.details = details;
     }
 
     public Video getVideo() {
@@ -26,11 +27,11 @@ public class VideoSharedDetails {
         this.video = video;
     }
 
-    public VideoYoutube getDetails() {
+    public List<VideoYoutube> getDetails() {
         return details;
     }
 
-    public void setDetails(VideoYoutube details) {
+    public void setDetails(List<VideoYoutube> details) {
         this.details = details;
     }
 

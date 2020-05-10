@@ -1,7 +1,6 @@
 package com.webtv.entity;
 
 import javax.persistence.Column;
-import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.EnumType;
@@ -32,9 +31,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 )
 @SqlResultSetMapping(
     name = "video-shared-details",
-    columns = {
-        @ColumnResult(name = "tags")
-    },
     entities = {
         @EntityResult(entityClass = Video.class),
         @EntityResult(
@@ -43,20 +39,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
                 @FieldResult(column = "details_id", name = "id"),
                 @FieldResult(column = "title", name = "title"),
                 @FieldResult(column = "description", name = "description"),
-                @FieldResult(column = "video_id", name = "video"),
-                @FieldResult(column = "tags", name = "tags"),
+                @FieldResult(column = "video_id", name = "video")
             }
         )
     }
 )
 @NamedNativeQuery(
     name = "findAllVideoWithDetails",
-    query = "SELECT v.*, d.id as 'details_id', d.title, d.description, d.video_id, tag.video_youtube_id, tag.tags FROM video v LEFT JOIN video_youtube d ON v.id = d.video_id LEFT JOIN video_youtube_tags tag ON tag.video_youtube_id = d.id",
+    query = "SELECT v.*, d.id as 'details_id', d.title, d.description, d.video_id FROM video v LEFT JOIN video_youtube d ON v.id = d.video_id",
     resultSetMapping = "video-shared-details"
 )
 @NamedNativeQuery(
     name = "findAllVideoWithDetailsByUser",
-    query = "SELECT v.*, d.id as 'details_id', d.title, d.description, d.video_id, tag.video_youtube_id, tag.tags FROM video v LEFT JOIN video_youtube d ON v.id = d.video_id LEFT JOIN video_youtube_tags tag ON tag.video_youtube_id = d.id WHERE v.author_id = :author_id",
+    query = "SELECT v.*, d.id as 'details_id', d.title, d.description, d.video_id FROM video v LEFT JOIN video_youtube d ON v.id = d.video_id WHERE v.author_id = :author_id",
     resultSetMapping = "video-shared-details"
 )
 public class Video {
@@ -129,4 +124,30 @@ public class Video {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Video other = (Video) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
 }

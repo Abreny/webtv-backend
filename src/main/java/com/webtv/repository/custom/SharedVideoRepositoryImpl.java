@@ -1,5 +1,6 @@
 package com.webtv.repository.custom;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +30,27 @@ public class SharedVideoRepositoryImpl implements SharedVideoRepository {
         entityManager.createQuery("SELECT v FROM VideoYoutube v LEFT JOIN FETCH v.tags", VideoYoutube.class)
                 .getResultList();
         Set<Long> videoIds = new HashSet<>();
-        List<VideoSharedDetails> videoDetails = result.stream().map(o -> {
+        List<VideoYoutube> details = new ArrayList<>();
+        Set<Video> videos = new HashSet<>();
+        result.stream().forEach(o -> {
             final Video video = (Video) o[0];
+            final VideoYoutube d = (VideoYoutube) o[1];
             videoIds.add(video.getId());
-            return new VideoSharedDetails(video, (VideoYoutube) o[1]);
-        }).collect(Collectors.toList());
+            if(d != null) {
+                details.add(d);
+            }
+            videos.add(video);
+        });
+        Map<Long, List<VideoYoutube>> mapDetails = details.stream()
+                .collect(Collectors.groupingBy(v -> v.getVideo().getId()));
         final Map<Long, User> users = (Map<Long, User>) entityManager.createNamedQuery("getAllUsersByVideoId")
                 .getResultStream().collect(Collectors.toMap((Object[] user) -> (Long) user[1], user -> (User) user[0]));
-        videoDetails = videoDetails.stream().map(v -> {
-            v.setAuthor(users.get(v.getVideo().getId()));
-            return v;
+        return videos.stream().map(v -> {
+            final VideoSharedDetails d = new VideoSharedDetails(v);
+            d.setAuthor(users.get(v.getId()));
+            d.setDetails(mapDetails.get(v.getId()));
+            return d;
         }).collect(Collectors.toList());
-        return videoDetails;
     }
 
     @Override
@@ -48,11 +58,24 @@ public class SharedVideoRepositoryImpl implements SharedVideoRepository {
         Query query = entityManager.createNamedQuery("findAllVideoWithDetailsByUser");
         query.setParameter("author_id", u.getId());
         List<Object[]> result = query.getResultList();
-
+        List<VideoYoutube> details = new ArrayList<>();
+        Set<Video> videos = new HashSet<>();
         // fetch the tags attribute
         entityManager.createQuery("SELECT v FROM VideoYoutube v LEFT JOIN FETCH v.tags", VideoYoutube.class)
                 .getResultList();
-        return result.stream().map(o -> new VideoSharedDetails((Video) o[0], (VideoYoutube) o[1]))
-                .collect(Collectors.toList());
+        result.stream().forEach(o -> {
+            final VideoYoutube d = (VideoYoutube) o[1];
+            if(d != null) {
+                details.add(d);
+            }
+            videos.add((Video) o[0]);
+        });
+        Map<Long, List<VideoYoutube>> mapDetails = details.stream()
+                .collect(Collectors.groupingBy(v -> v.getVideo().getId()));
+        return videos.stream().map(v -> {
+            final VideoSharedDetails d = new VideoSharedDetails(v);
+            d.setDetails(mapDetails.get(v.getId()));
+            return d;
+        }).collect(Collectors.toList());
     }
 }
