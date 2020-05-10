@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import com.webtv.service.Translator;
 import com.webtv.service.endpoints.VideoService;
 import com.webtv.service.security.SecurityHelper;
 import com.webtv.service.serializer.AdminVideoList;
+import com.webtv.service.serializer.VideoSharedDetails;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,7 @@ public class UploadVideoController {
 
     @ApiOperation("MesVideo. Get all the user's uploaded video.")
     @GetMapping("mes")
-    ResponseModel<AdminVideoList> mes(HttpServletRequest request) {
+    ResponseModel<List<VideoSharedDetails>> mes(HttpServletRequest request) {
         return videoService.mesVideos(request.isUserInRole(String.format("ROLE_%s", UserRole.ADMIN.name())));
     }
 
@@ -102,5 +104,10 @@ public class UploadVideoController {
     @GetMapping("mes-admin")
     ResponseModel<AdminVideoList> mesAdmin() {
         return videoService.allWithAuthor();
+    }
+    @ApiOperation("MesVideoShared. Get all the admin's shared video.")
+    @GetMapping("mes-shared")
+    ResponseModel<List<VideoSharedDetails>> sharedVideos() {
+        return videoService.sharedVideos();
     }
 }

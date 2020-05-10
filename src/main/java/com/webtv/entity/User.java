@@ -1,12 +1,16 @@
 package com.webtv.entity;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -18,6 +22,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
+@SqlResultSetMapping(
+    name = "users-with-video-id",
+    entities = {
+        @EntityResult(entityClass = User.class)
+    },
+    columns = {
+        @ColumnResult(name = "video_id", type = Long.class)
+    }
+)
+@NamedNativeQuery(
+    name = "getAllUsersByVideoId",
+    query = "SELECT a.*, v.id as 'video_id' FROM users a JOIN video v on v.author_id = a.id",
+    resultSetMapping = "users-with-video-id"
+)
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class User {
 

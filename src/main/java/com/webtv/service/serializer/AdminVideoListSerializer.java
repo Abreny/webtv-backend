@@ -17,18 +17,12 @@ public class AdminVideoListSerializer extends JsonSerializer<AdminVideoList> {
         gen.writeStartArray();
         for (Video video: value.getVideos()) {
             gen.writeStartObject();
-            writeVideo(gen, video);
+            new VideoJsonWritter().writeVideo(gen, video);
             if(value.isAuthorSerialized()) {
                 gen.writeObjectField("author", video.getAuthor());
             }
             gen.writeEndObject();
         }
         gen.writeEndArray();
-    }
-    public void writeVideo(JsonGenerator gen, Video value) throws IOException {
-        gen.writeNumberField("id", value.getId());
-        gen.writeStringField("content_type", value.getContentType());
-        gen.writeStringField("url", value.getUrl());
-        gen.writeStringField("status", value.getStatus().name());
     }
 }

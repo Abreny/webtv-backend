@@ -1,11 +1,13 @@
 package com.webtv.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +33,7 @@ public class VideoYoutube {
     private String description;
 
     @Column(name = "tags")
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     private Set<String> tags;
 
     @ApiModelProperty(hidden = true)
@@ -78,5 +80,12 @@ public class VideoYoutube {
     @ApiModelProperty(hidden = true)
     public void setVideo(Video video) {
         this.video = video;
+    }
+
+    public void addTag(String tag) {
+        if(null == this.tags) {
+            tags = new HashSet<>();
+        }
+        this.tags.add(tag);
     }
 }

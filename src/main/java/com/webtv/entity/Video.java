@@ -1,10 +1,13 @@
 package com.webtv.entity;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.FieldResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,6 +29,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
   attributeNodes = {
     @NamedAttributeNode("author")
   }
+)
+@SqlResultSetMapping(
+    name = "video-shared-details",
+    columns = {
+        @ColumnResult(name = "tags")
+    },
+    entities = {
+        @EntityResult(entityClass = Video.class),
+        @EntityResult(
+            entityClass = VideoYoutube.class,
+            fields = {
+                @FieldResult(column = "details_id", name = "id"),
+                @FieldResult(column = "title", name = "title"),
+                @FieldResult(column = "description", name = "description"),
+                @FieldResult(column = "video_id", name = "video"),
+                @FieldResult(column = "tags", name = "tags"),
+            }
+        )
+    }
+)
+@NamedNativeQuery(
+    name = "findAllVideoWithDetails",
+    query = "SELECT v.*, d.id as 'details_id', d.title, d.description, d.video_id, tag.video_youtube_id, tag.tags FROM video v LEFT JOIN video_youtube d ON v.id = d.video_id LEFT JOIN video_youtube_tags tag ON tag.video_youtube_id = d.id",
+    resultSetMapping = "video-shared-details"
+)
+@NamedNativeQuery(
+    name = "findAllVideoWithDetailsByUser",
+    query = "SELECT v.*, d.id as 'details_id', d.title, d.description, d.video_id, tag.video_youtube_id, tag.tags FROM video v LEFT JOIN video_youtube d ON v.id = d.video_id LEFT JOIN video_youtube_tags tag ON tag.video_youtube_id = d.id WHERE v.author_id = :author_id",
+    resultSetMapping = "video-shared-details"
 )
 public class Video {
     @Id
