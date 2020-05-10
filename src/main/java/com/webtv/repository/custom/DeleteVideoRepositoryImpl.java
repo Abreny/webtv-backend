@@ -13,7 +13,7 @@ public class DeleteVideoRepositoryImpl implements DeleteVideoRepository {
     @Transactional
     @Override
     public void deleteAllByVideoId(Long videoId) {
-       Query q = entityManager.createNativeQuery("delete you from video_youtube_tags you INNER JOIN video_youtube vy on vy.id = you.video_youtube_id where vy.id = :video_id");
+       Query q = entityManager.createNativeQuery("delete you from video_youtube_tags you INNER JOIN video_youtube vy on vy.video_id = you.video_youtube_id where vy.id = :video_id");
         q.setParameter("video_id", videoId);
         q.executeUpdate();
         entityManager.flush();
