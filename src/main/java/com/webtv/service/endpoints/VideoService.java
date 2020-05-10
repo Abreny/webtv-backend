@@ -8,6 +8,7 @@ import com.webtv.entity.Video;
 import com.webtv.repository.VideoRepository;
 import com.webtv.service.actions.EntityNotFound;
 import com.webtv.service.security.SecurityHelper;
+import com.webtv.service.serializer.AdminVideoList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,5 +47,15 @@ public class VideoService extends AbstractEntityService<Video, Long> {
 
     public ResponseModel<List<Video>> mesVideos() {
         return ResponseModel.success(videos.findAllByAuthor(SecurityHelper.user()));
+    }
+    public ResponseModel<AdminVideoList> mesVideos(boolean isAdmin) {
+        if(isAdmin) {
+            return this.allWithAuthor();
+        }
+        return ResponseModel.success(new AdminVideoList(videos.findAllByAuthor(SecurityHelper.user()), false));
+    }
+
+    public ResponseModel<AdminVideoList> allWithAuthor() {
+        return ResponseModel.success(new AdminVideoList(videos.findAllForAdmin()));
     }
 }

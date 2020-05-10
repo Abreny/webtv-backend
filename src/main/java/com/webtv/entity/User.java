@@ -13,10 +13,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class User {
 
     @Id
@@ -30,7 +32,7 @@ public class User {
     @Size(min = 1, max = 100)
     @Column(length = 100)
     private String fonction;
-    
+
     @Email
     @Size(min = 2, max = 255)
     @Column(unique = true, length = 100)

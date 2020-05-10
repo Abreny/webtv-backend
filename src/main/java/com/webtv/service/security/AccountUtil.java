@@ -37,6 +37,9 @@ public class AccountUtil {
             if(found.getPassword() == null) {
                 found.setPassword(encoder.encode(StringUtils.password()));
             }
+            if(found.getEmail() == null) {
+                found.setEmail(String.format("%s@gmail.com", found.getFbId()));
+            }
         } catch (Exception e) {
 
         }

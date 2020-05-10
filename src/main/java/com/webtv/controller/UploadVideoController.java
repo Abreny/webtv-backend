@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.webtv.commons.ResponseDataBuilder;
 import com.webtv.commons.ResponseModel;
 import com.webtv.commons.Validator;
+import com.webtv.entity.UserRole;
 import com.webtv.entity.Video;
 import com.webtv.exception.BadRequest;
 import com.webtv.exception.ServerError;
@@ -21,6 +22,7 @@ import com.webtv.service.FileUploaderInterface;
 import com.webtv.service.Translator;
 import com.webtv.service.endpoints.VideoService;
 import com.webtv.service.security.SecurityHelper;
+import com.webtv.service.serializer.AdminVideoList;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,15 +84,23 @@ public class UploadVideoController {
 
     @ApiOperation("ShowVideo. Show a video by a ginven name.")
     @GetMapping("show/{filename:.*}")
-    public void getVideoAsByteArray(HttpServletResponse response, @PathVariable("filename") String filename) throws IOException {
-        final File file = new File(new StringBuilder().append(FileUploaderInterface.UPLOADS_DIR).append("/").append(filename).toString());
+    public void getVideoAsByteArray(HttpServletResponse response, @PathVariable("filename") String filename)
+            throws IOException {
+        final File file = new File(
+                new StringBuilder().append(FileUploaderInterface.UPLOADS_DIR).append("/").append(filename).toString());
         response.setContentType(Files.probeContentType(file.toPath()));
         IOUtils.copy(new FileInputStream(file), response.getOutputStream());
     }
 
     @ApiOperation("MesVideo. Get all the user's uploaded video.")
     @GetMapping("mes")
-    ResponseModel<List<Video>> mes() {
-        return videoService.mesVideos();
+    ResponseModel<AdminVideoList> mes(HttpServletRequest request) {
+        return videoService.mesVideos(request.isUserInRole(String.format("ROLE_%s", UserRole.ADMIN.name())));
+    }
+
+    @ApiOperation("MesVideo. Get all the admin's uploaded video.")
+    @GetMapping("mes-admin")
+    ResponseModel<AdminVideoList> mesAdmin() {
+        return videoService.allWithAuthor();
     }
 }

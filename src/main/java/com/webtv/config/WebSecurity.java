@@ -92,7 +92,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             "/api/v1/auth/google/authorize-url",
             "/api/v1/google/share-youtube/**",
             "/api/v1/google/token",
-            "/api/v1/google/revoke-token"
+            "/api/v1/google/revoke-token",
+            "/api/v1/videos/mes-admin"
         };
         http.csrf().disable()
         .exceptionHandling()

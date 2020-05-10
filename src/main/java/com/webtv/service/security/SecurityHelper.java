@@ -8,4 +8,7 @@ public final class SecurityHelper {
     public static User user() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+    public static UserWrapper userWrapper() {
+        return (UserWrapper) SecurityContextHolder.getContext().getAuthentication();
+    }
 }
