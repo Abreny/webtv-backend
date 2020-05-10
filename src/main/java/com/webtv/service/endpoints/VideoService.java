@@ -6,6 +6,7 @@ import com.webtv.commons.FileHelper;
 import com.webtv.commons.ResponseModel;
 import com.webtv.entity.Video;
 import com.webtv.repository.VideoRepository;
+import com.webtv.repository.VideoYoutubeRepository;
 import com.webtv.service.actions.EntityNotFound;
 import com.webtv.service.security.SecurityHelper;
 import com.webtv.service.serializer.AdminVideoList;
@@ -18,15 +19,18 @@ import org.springframework.validation.BindingResult;
 @Component
 public class VideoService extends AbstractEntityService<Video, Long> {
     
-    private EntityNotFound notFound;
+    private final EntityNotFound notFound;
 
-    private VideoRepository videos;
+    private final VideoRepository videos;
+
+    private final VideoYoutubeRepository youtubes;
 
     @Autowired
-    public VideoService(VideoRepository videoRepository, EntityNotFound entityNotFound) {
+    public VideoService(VideoRepository videoRepository, VideoYoutubeRepository youtubes, EntityNotFound entityNotFound) {
         super(videoRepository);
         this.videos = videoRepository;
         this.notFound = entityNotFound;
+        this.youtubes = youtubes;
     }
 
     @Override
@@ -65,5 +69,10 @@ public class VideoService extends AbstractEntityService<Video, Long> {
 	}
 	public ResponseModel<List<VideoSharedDetails>> sharedVideosByUser() {
 		return ResponseModel.success(videos.findAllSharedByUser(SecurityHelper.user()));
-	}
+    }
+    
+    protected void beforeDelete(Video entity) {
+        // youtubes.deleteAllTagsByVideoId(entity.getId());
+        youtubes.deleteAllByVideoId(entity.getId());
+    }
 }

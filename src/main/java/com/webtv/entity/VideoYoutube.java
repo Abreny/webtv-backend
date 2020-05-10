@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -34,6 +35,7 @@ public class VideoYoutube {
 
     @Column(name = "tags")
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
+    @JoinTable(name = "tags", joinColumns = @JoinColumn(name = "video_id"))
     private Set<String> tags;
 
     @ApiModelProperty(hidden = true)
