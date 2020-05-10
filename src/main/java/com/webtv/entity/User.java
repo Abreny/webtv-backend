@@ -38,8 +38,9 @@ public class User {
     @Column(unique = true, length = 100)
     private String email;
 
+    @Column(columnDefinition = "varchar(255) default 'USER'")
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role;
 
     @JsonIgnore
     @Size(min = 2, max = 255)

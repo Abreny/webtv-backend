@@ -3,6 +3,7 @@ package com.webtv.service.endpoints;
 import com.google.api.client.auth.oauth2.Credential;
 import com.webtv.commons.ResponseModel;
 import com.webtv.entity.Video;
+import com.webtv.entity.VideoStatus;
 import com.webtv.entity.VideoYoutube;
 import com.webtv.exception.GoogleAuthException;
 import com.webtv.repository.VideoRepository;
@@ -42,6 +43,8 @@ public class ShareService extends AbstractEntityService<VideoYoutube, Long> {
         final Video video = this.notFound.checkId(videos, "uploaded_video_id", videoId);
         youtubeVideo.setVideo(video);
         final VideoYoutube createdVideo = this.create(youtubeVideo, bindingResult).getData();
+        video.setStatus(VideoStatus.WAITING);
+        videos.save(video);
         final YoutubeUploader youtubeUploader = new YoutubeUploader(googleCredential, createdVideo, videos);
         new Thread(youtubeUploader).start();
         return ResponseModel.success(createdVideo);

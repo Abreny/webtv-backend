@@ -75,9 +75,7 @@ public class YoutubeUploader implements Runnable {
                             break;
                         case MEDIA_COMPLETE:
                             System.out.println("Upload completed.");
-                            final com.webtv.entity.Video uploadVideo= YoutubeUploader.this.video.getVideo();
-                            uploadVideo.setStatus(com.webtv.entity.VideoStatus.SHARED);
-                            YoutubeUploader.this.videos.save(uploadVideo);
+                            YoutubeUploader.this.updateStatus(com.webtv.entity.VideoStatus.SHARED);
                             break;
                         case NOT_STARTED:
                             System.out.println("Upload Not Started!");
@@ -97,22 +95,26 @@ public class YoutubeUploader implements Runnable {
             System.out.println("  - Tags: " + returnedVideo.getSnippet().getTags());
             System.out.println("  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
             System.out.println("  - Video Count: " + returnedVideo.getStatistics().getViewCount());
-
         } catch (GoogleJsonResponseException e) {
             System.err.println("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : "
                     + e.getDetails().getMessage());
             e.printStackTrace();
+            this.updateStatus(com.webtv.entity.VideoStatus.NOT_SHARED);
         } catch (IOException e) {
             System.err.println("IOException: " + e.getMessage());
             e.printStackTrace();
-        } catch (Throwable t) {
-            System.err.println("Throwable: " + t.getMessage());
-            t.printStackTrace();
+            this.updateStatus(com.webtv.entity.VideoStatus.NOT_SHARED);
         }
     }
 
     @Override
     public void run() {
         upload();
+    }
+
+    private final void updateStatus(com.webtv.entity.VideoStatus videoStatus) {
+        final com.webtv.entity.Video uploadVideo = this.video.getVideo();
+        uploadVideo.setStatus(videoStatus);
+        this.videos.save(uploadVideo);
     }
 }

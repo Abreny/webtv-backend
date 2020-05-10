@@ -2,5 +2,7 @@ package com.webtv.entity;
 
 public enum VideoStatus {
     CREATED,
-    SHARED
+    WAITING,
+    SHARED,
+    NOT_SHARED
 }
